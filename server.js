@@ -1,31 +1,15 @@
 var express=require("express");
 var app=express();
+var bodyParser=require("body-parser");
+var students=require("./routes/students")
+var books=require("./routes/books");
 
-var students=[
-    {
-        id:1,
-        name:"Varma"
-    },
-    {
-        id:2,
-        name:"Neelima"
-    },
-    {
-        id:3,
-        name:"Suma"
-    }
-]
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:true}))
 
-app.use(express.static("public"))
+app.use("/api/students",students);
+app.use("/api/books",books);
 
-app.get("/",(req,res)=>{
-    res.send("Welcome to Batch 6 Server")
-})
-
-app.get("/api/students",(req,res)=>{
-    res.send(students)
-})
-
-app.listen(7000,()=>{
-    console.log("Server is started")
+app.listen(8000,()=>{
+    console.log("Students server is started")
 })
