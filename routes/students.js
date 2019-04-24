@@ -1,52 +1,40 @@
 var express=require("express")
-
 var router=express.Router();
 
-var students=[
-    {
-        id:1,
-        name:"Varma"
-    },
-    {
-        id:2,
-        name:"Neelima"
-    },
-    {
-        id:3,
-        name:"Suma"
-    }
-]
+var db=require('../db')
+
 
 //get all students
 router.route("/")
     .get((req,res)=>{
-        res.send(students);
+        db.Student.find({},(err,students)=>{
+            if(err) res.send(err);
+            res.send(students);
+        })
     })
     .post((req,res)=>{
-        var newStudent=req.body;
-        students.push(newStudent);
-        res.send(students)
+        var newStudent=new db.Student(req.body);
+        newStudent.save((err,student)=>{
+            if(err) res.status(500).send(err);
+            res.status(200).send(student)
+        })
     })
 
 //get single student
 router.route("/:id")
     .get((req,res)=>{
         var id=req.params.id
-
-        var student=students.filter((student)=>{
-            return student.id==id
-        })
-
-        res.send(student);
+        db.Student.findById(id,(err,student)=>{
+            if(err) res.send(err);
+            res.send(student);
+        })    
     })
     .delete((req,res)=>{
         var id=req.params.id;
-
-        var newStudents=students.filter((student)=>{
-            return student.id !=id
+        db.Student.findByIdAndDelete(id,(err,student)=>{
+            if(err) res.send(err)
+            res.send(student);
         })
-
-        res.send(newStudents);
     })
 
 module.exports=router;
